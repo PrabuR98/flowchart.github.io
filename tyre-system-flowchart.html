@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TyrePro System Flowchart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --orange: #d4621a;
+        --orange-lt: #f5eae3;
+        --green: #2d7a4f;
+        --green-lt: #e8f5ee;
+        --blue: #1d4ed8;
+        --blue-lt: #eff6ff;
+        --purple: #7c3aed;
+        --purple-lt: #ede9fe;
+        --amber: #b45309;
+        --amber-lt: #fef3c7;
+        --red: #c62828;
+        --red-lt: #fdeaea;
+        --bg: #f7f5f2;
+        --surface: #ffffff;
+        --border: #e2e2de;
+        --text: #1a1a1a;
+        --muted: #8a8a82;
+      }
+
+      body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        padding: 32px 24px 60px;
+        min-height: 100vh;
+      }
+
+      h1 {
+        font-family: 'Syne', sans-serif;
+        font-size: 28px;
+        font-weight: 900;
+        color: var(--text);
+        margin-bottom: 4px;
+      }
+      .subtitle {
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 32px;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 36px;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12.5px;
+        font-weight: 500;
+      }
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+      }
+
+      /* ── FLOW LAYOUT ──────────────────────────────── */
+      .flow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+      }
+
+      /* ── ROW ─────────────────────────────────────── */
+      .row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        position: relative;
+      }
+      .row + .row {
+        margin-top: 0;
+      }
+
+      /* ── CONNECTOR ───────────────────────────────── */
+      .connector {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        width: 100%;
+      }
+      .arrow-down {
+        width: 2px;
+        height: 28px;
+        background: var(--border);
+        position: relative;
+      }
+      .arrow-down::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 6px solid var(--border);
+      }
+      .arrow-label {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 600;
+        background: var(--bg);
+        padding: 1px 6px;
+        border-radius: 4px;
+        white-space: nowrap;
+        margin: -2px 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ── NODE ────────────────────────────────────── */
+      .node {
+        border-radius: 12px;
+        padding: 14px 18px;
+        border: 1.5px solid;
+        cursor: default;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+        position: relative;
+        min-width: 140px;
+        text-align: center;
+      }
+      .node:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        z-index: 10;
+      }
+      .node-icon {
+        font-size: 22px;
+        margin-bottom: 6px;
+      }
+      .node-title {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        line-height: 1.3;
+      }
+      .node-sub {
+        font-size: 11px;
+        margin-top: 4px;
+        opacity: 0.75;
+        line-height: 1.4;
+      }
+      .node-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 99px;
+        background: var(--text);
+        color: #fff;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      /* Colour variants */
+      .node-start {
+        background: #1a1a1a;
+        border-color: #1a1a1a;
+        color: #fff;
+      }
+      .node-orange {
+        background: var(--orange-lt);
+        border-color: var(--orange);
+        color: var(--orange);
+      }
+      .node-green {
+        background: var(--green-lt);
+        border-color: var(--green);
+        color: var(--green);
+      }
+      .node-blue {
+        background: var(--blue-lt);
+        border-color: var(--blue);
+        color: var(--blue);
+      }
+      .node-purple {
+        background: var(--purple-lt);
+        border-color: var(--purple);
+        color: var(--purple);
+      }
+      .node-amber {
+        background: var(--amber-lt);
+        border-color: var(--amber);
+        color: var(--amber);
+      }
+      .node-red {
+        background: var(--red-lt);
+        border-color: var(--red);
+        color: var(--red);
+      }
+      .node-grey {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #475569;
+      }
+      .node-admin {
+        background: #fff7ed;
+        border-color: #f97316;
+        color: #c2410c;
+      }
+
+      /* Diamond decision */
+      .diamond-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .diamond {
+        width: 135px;
+        height: 75px;
+        background: #1a1a1a;
+        clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Syne', sans-serif;
+        font-size: 11.5px;
+        font-weight: 800;
+        color: #fff;
+        text-align: center;
+        cursor: default;
+        transition: transform 0.15s;
+      }
+      .diamond:hover {
+        transform: scale(1.05);
+      }
+      .diamond-labels {
+        display: flex;
+        justify-content: space-between;
+        width: 220px;
+        margin-top: -2px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        padding: 0 8px;
+      }
+
+      /* ── BRANCH CONTAINER ────────────────────────── */
+      .branch-row {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        width: 100%;
+      }
+      .branch-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+      }
+
+      /* ── STATUS FLOW ────────────────────────────── */
+      .status-flow {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 14px 18px;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .status-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .status-bubble {
+        padding: 6px 14px;
+        border-radius: 99px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .status-role {
+        font-size: 10px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .status-arrow {
+        font-size: 18px;
+        color: var(--muted);
+        margin-top: 12px;
+      }
+
+      /* ── GRID SECTION ────────────────────────────── */
+      .section-title {
+        font-family: 'Syne', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      .module-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        width: 100%;
+        max-width: 700px;
+      }
+      .module-card {
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: 1.5px solid;
+        text-align: center;
+        cursor: default;
+        transition: transform 0.15s;
+      }
+      .module-card:hover {
+        transform: translateY(-2px);
+      }
+      .module-card .icon {
+        font-size: 20px;
+        margin-bottom: 5px;
+      }
+      .module-card .label {
+        font-family: 'Syne', sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+      .module-card .sub {
+        font-size: 10.5px;
+        margin-top: 3px;
+        opacity: 0.7;
+      }
+
+      /* ── ROLE CHIPS ──────────────────────────────── */
+      .roles-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .role-chip {
+        padding: 7px 14px;
+        border-radius: 99px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1.5px solid;
+      }
+
+      /* ── HORIZONTAL CONNECTOR ───────────────────── */
+      .h-line {
+        width: 28px;
+        height: 2px;
+        background: var(--border);
+        flex-shrink: 0;
+        margin-top: 30px;
+        position: relative;
+      }
+      .h-line::after {
+        content: '';
+        position: absolute;
+        right: -5px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-left: 6px solid var(--border);
+      }
+
+      .divider {
+        width: 100%;
+        height: 1px;
+        background: var(--border);
+        margin: 36px 0;
+      }
+
+      .section-wrap {
+        width: 100%;
+        max-width: 820px;
+        margin: 0 auto;
+      }
+
+      /* tooltip */
+      .node[data-tip]:hover::before {
+        content: attr(data-tip);
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1a1a1a;
+        color: #fff;
+        font-size: 11.5px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        white-space: nowrap;
+        z-index: 99;
+        pointer-events: none;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 400;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="section-wrap">
+      <h1>🔧 TyrePro System — Flow Chart</h1>
+      <p class="subtitle">Complete module map and job lifecycle from login to closed invoice</p>
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background: #1a1a1a"></div>
+          Entry / Auth
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--orange)"></div>
+          Job Card Flow
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--green)"></div>
+          Completed / Paid
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--blue)"></div>
+          Technician
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--purple)"></div>
+          QC Inspection
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background: var(--amber)"></div>
+          Billing
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#F97316)"></div>
+          Admin / Config
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!--  SECTION 1: LOGIN                           -->
+      <!-- ════════════════════════════════════════════ -->
+
+      <p class="section-title">1 · Authentication</p>
+      <div class="flow">
+        <div class="node node-start" style="width: 180px" data-tip="login.php">
+          <div class="node-icon">🔒</div>
+          <div class="node-title">Login Page</div>
+          <div class="node-sub">Email + Password</div>
+        </div>
+
+        <div class="connector"><div class="arrow-down"></div></div>
+
+        <!-- Diamond: Role check -->
+        <div class="diamond-wrap">
+          <div class="diamond">
+            ROLE
+            <br />
+            CHECK
+          </div>
+        </div>
+
+        <div style="height: 16px"></div>
+
+        <!-- Role branches -->
+        <div class="roles-row">
+          <div class="role-chip" style="background: #fff7ed; border-color: #f97316; color: #c2410c">👑 Admin</div>
+          <div class="role-chip" style="background: var(--blue-lt); border-color: var(--blue); color: var(--blue)">📋 Manager</div>
+          <div class="role-chip" style="background: var(--green-lt); border-color: var(--green); color: var(--green)">🔧 Technician</div>
+          <div class="role-chip" style="background: var(--purple-lt); border-color: var(--purple); color: var(--purple)">✅ QC</div>
+          <div class="role-chip" style="background: var(--amber-lt); border-color: var(--amber); color: var(--amber)">🧾 Accounts</div>
+          <div class="role-chip" style="background: #f1f5f9; border-color: #cbd5e1; color: #475569">⚙️ Custom Roles</div>
+        </div>
+
+        <div class="connector">
+          <div class="arrow-down"></div>
+          <div class="arrow-label">all roles</div>
+          <div class="arrow-down"></div>
+        </div>
+
+        <div class="node node-grey" style="width: 200px" data-tip="dashboard.php">
+          <div class="node-icon">📊</div>
+          <div class="node-title">Dashboard</div>
+          <div class="node-sub">Role-specific stats & recent jobs</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!--  SECTION 2: CUSTOMER & VEHICLE SETUP        -->
+      <!-- ════════════════════════════════════════════ -->
+
+      <p class="section-title">2 · Customer & Vehicle Setup</p>
+
+      <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap">
+        <div class="branch-col">
+          <div class="node node-blue" style="width: 170px" data-tip="modules/customers/">
+            <div class="node-icon">👥</div>
+            <div class="node-title">Customer</div>
+            <div class="node-sub">Add · Edit · View history</div>
+          </div>
+          <div class="connector"><div class="arrow-down"></div></div>
+          <div class="node node-grey" style="width: 170px; font-size: 12px">
+            <div style="font-size: 13px; font-weight: 600; font-family: 'Syne', sans-serif">Fields</div>
+            <div class="node-sub">
+              Name · Mobile · Email
+              <br />
+              Address · GST No
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; padding-top: 28px">
+          <div class="h-line" style="width: 40px; margin-top: 16px"></div>
+        </div>
+
+        <div class="branch-col">
+          <div class="node node-blue" style="width: 170px" data-tip="modules/vehicles/">
+            <div class="node-icon">🚗</div>
+            <div class="node-title">Vehicle</div>
+            <div class="node-sub">Linked to customer</div>
+          </div>
+          <div class="connector"><div class="arrow-down"></div></div>
+          <div class="node node-grey" style="width: 170px; font-size: 12px">
+            <div style="font-size: 13px; font-weight: 600; font-family: 'Syne', sans-serif">Fields</div>
+            <div class="node-sub">
+              Reg No · Make/Model
+              <br />
+              Year · Tyre Size · Odometer
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; padding-top: 28px">
+          <div class="h-line" style="width: 40px; margin-top: 16px"></div>
+        </div>
+
+        <div class="branch-col">
+          <div class="node node-grey" style="width: 160px" data-tip="modules/master/vehicles.php">
+            <div class="node-icon">🚙</div>
+            <div class="node-title">Makes & Models</div>
+            <div class="node-sub">
+              Catalogue: 32 makes
+              <br />
+              200+ models seeded
+            </div>
+          </div>
+          <div class="connector"><div class="arrow-down"></div></div>
+          <div class="node node-grey" style="width: 160px; font-size: 12px">
+            <div style="font-size: 13px; font-weight: 600; font-family: 'Syne', sans-serif">Cascade Dropdown</div>
+            <div class="node-sub">
+              Select Make →
+              <br />
+              Models auto-load
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!--  SECTION 3: JOB CARD LIFECYCLE              -->
+      <!-- ════════════════════════════════════════════ -->
+
+      <p class="section-title">3 · Job Card Lifecycle (Core Flow)</p>
+
+      <div class="flow">
+        <!-- CREATE JOB -->
+        <div class="node node-orange" style="width: 220px" data-tip="modules/job-cards/create.php">
+          <div class="node-badge" style="background: var(--orange)">Manager</div>
+          <div class="node-icon">📋</div>
+          <div class="node-title">Create Job Card</div>
+          <div class="node-sub">
+            Select customer + vehicle
+            <br />
+            Add services + products
+            <br />
+            Set priority · assign tech
+          </div>
+        </div>
+
+        <div class="connector">
+          <div class="arrow-down"></div>
+          <div class="arrow-label">auto-generates JC-2026-XXXX</div>
+          <div class="arrow-down"></div>
+        </div>
+
+        <!-- STATUS FLOW -->
+        <div class="status-flow">
+          <div class="status-step">
+            <div class="status-bubble" style="background: #eff6ff; color: #1d4ed8">📋 Open</div>
+            <div class="status-role">Manager creates</div>
+          </div>
+          <div class="status-arrow">→</div>
+          <div class="status-step">
+            <div class="status-bubble" style="background: var(--amber-lt); color: var(--amber)">⚙️ In Progress</div>
+            <div class="status-role">Tech starts work</div>
+          </div>
+          <div class="status-arrow">→</div>
+          <div class="status-step">
+            <div class="status-bubble" style="background: var(--purple-lt); color: var(--purple)">🔍 QC Check</div>
+            <div class="status-role">Tech submits</div>
+          </div>
+          <div class="status-arrow">→</div>
+          <div class="status-step">
+            <div class="status-bubble" style="background: var(--green-lt); color: var(--green)">✅ Completed</div>
+            <div class="status-role">QC approves</div>
+          </div>
+          <div class="status-arrow">→</div>
+          <div class="status-step">
+            <div class="status-bubble" style="background: #f1f5f9; color: #475569">🔒 Closed</div>
+            <div class="status-role">Invoice paid</div>
+          </div>
+        </div>
+
+        <div class="connector" style="height: 16px; margin-top: 8px"><div class="arrow-down"></div></div>
+
+        <!-- Three parallel branches -->
+        <div class="branch-row" style="align-items: flex-start">
+          <!-- TECHNICIAN BRANCH -->
+          <div class="branch-col">
+            <div class="node node-blue" style="width: 190px" data-tip="modules/technician/">
+              <div class="node-badge" style="background: var(--blue)">Technician</div>
+              <div class="node-icon">🔧</div>
+              <div class="node-title">My Jobs Dashboard</div>
+              <div class="node-sub">
+                Quick-action buttons
+                <br />
+                Start · Mark Ready for QC
+              </div>
+            </div>
+            <div class="connector"><div class="arrow-down"></div></div>
+            <div class="node node-grey" style="width: 190px">
+              <div class="node-icon">🚗</div>
+              <div class="node-title">Wheel Notes</div>
+              <div class="node-sub">
+                Interactive car diagram
+                <br />
+                Notes per wheel position
+                <br />
+                FL · FR · RL · RR · Spare
+              </div>
+            </div>
+            <div class="connector"><div class="arrow-down"></div></div>
+            <div class="node node-blue" style="width: 190px; opacity: 0.75">
+              <div class="node-title" style="font-size: 12px">→ Set status to QC</div>
+            </div>
+          </div>
+
+          <!-- QC BRANCH -->
+          <div class="branch-col">
+            <div class="node node-purple" style="width: 190px" data-tip="modules/qc/">
+              <div class="node-badge" style="background: var(--purple)">QC Role</div>
+              <div class="node-icon">✅</div>
+              <div class="node-title">QC Inspection</div>
+              <div class="node-sub">
+                Checklist · test drive
+                <br />
+                Review wheel notes
+              </div>
+            </div>
+            <div class="connector"><div class="arrow-down"></div></div>
+            <!-- QC diamond -->
+            <div style="background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; width: 190px; text-align: center">
+              <div style="font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px; margin-bottom: 8px">QC RESULT</div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <div style="padding: 5px 10px; background: var(--green-lt); border: 1px solid var(--green); border-radius: 6px; font-size: 11.5px; font-weight: 600; color: var(--green)">
+                  ✅ Approve → Completed
+                </div>
+                <div style="padding: 5px 10px; background: var(--amber-lt); border: 1px solid var(--amber); border-radius: 6px; font-size: 11.5px; font-weight: 600; color: var(--amber)">
+                  🔁 Rework → In Progress
+                </div>
+                <div style="padding: 5px 10px; background: var(--red-lt); border: 1px solid var(--red); border-radius: 6px; font-size: 11.5px; font-weight: 600; color: var(--red)">
+                  ❌ Reject → stays QC
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- JOB CARD VIEW -->
+          <div class="branch-col">
+            <div class="node node-grey" style="width: 190px" data-tip="modules/job-cards/view.php">
+              <div class="node-icon">👁</div>
+              <div class="node-title">Job Card View</div>
+              <div class="node-sub">
+                All roles can view
+                <br />
+                Progress timeline
+                <br />
+                Cost summary
+              </div>
+            </div>
+            <div class="connector"><div class="arrow-down"></div></div>
+            <div class="node node-grey" style="width: 190px">
+              <div class="node-icon">✏️</div>
+              <div class="node-title">Edit Job Card</div>
+              <div class="node-sub">
+                Manager / Admin only
+                <br />
+                Modify services, products
+                <br />
+                Change technician
+              </div>
+            </div>
+            <div class="connector"><div class="arrow-down"></div></div>
+            <div class="node node-orange" style="width: 190px; opacity: 0.75">
+              <div class="node-title" style="font-size: 12px">Priority: Normal · High · 🚨 Emergency</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!--  SECTION 4: BILLING                         -->
+      <!-- ════════════════════════════════════════════ -->
+
+      <p class="section-title">4 · Billing & Payments</p>
+
+      <div class="flow">
+        <div class="node node-green" style="width: 190px" data-tip="After QC Approved">
+          <div class="node-icon">✅</div>
+          <div class="node-title">Job Completed</div>
+          <div class="node-sub">QC approved</div>
+        </div>
+
+        <div class="connector"><div class="arrow-down"></div></div>
+
+        <div class="node node-amber" style="width: 220px" data-tip="modules/billing/create.php">
+          <div class="node-badge" style="background: var(--amber)">Accounts</div>
+          <div class="node-icon">🧾</div>
+          <div class="node-title">Create Invoice</div>
+          <div class="node-sub">
+            Services + Products breakdown
+            <br />
+            Tax / GST % · Grand total
+            <br />
+            INV-2026-XXXX auto-generated
+          </div>
+        </div>
+
+        <div class="connector">
+          <div class="arrow-down"></div>
+          <div class="arrow-label">job → Closed</div>
+          <div class="arrow-down"></div>
+        </div>
+
+        <div style="display: flex; gap: 16px; justify-content: center">
+          <div class="branch-col">
+            <div class="node node-green" style="width: 180px" data-tip="modules/billing/payment.php">
+              <div class="node-icon">💳</div>
+              <div class="node-title">Record Payment</div>
+              <div class="node-sub">
+                Cash · UPI · Card
+                <br />
+                Bank Transfer · Other
+              </div>
+            </div>
+            <div class="connector"><div class="arrow-down"></div></div>
+            <div class="node node-grey" style="width: 180px">
+              <div class="node-icon">⏳</div>
+              <div class="node-title">Partial / Pending</div>
+              <div class="node-sub">
+                Balance tracked
+                <br />
+                Multiple payments allowed
+              </div>
+            </div>
+            <div class="connector"><div class="arrow-down"></div></div>
+            <div class="node node-green" style="width: 180px">
+              <div class="node-title" style="font-size: 12px">✅ Fully Paid</div>
+            </div>
+          </div>
+
+          <div class="branch-col">
+            <div class="node node-amber" style="width: 180px" data-tip="modules/billing/view.php?print=1">
+              <div class="node-icon">🖨</div>
+              <div class="node-title">Print Invoice</div>
+              <div class="node-sub">
+                Clean print layout
+                <br />
+                Customer + vehicle details
+                <br />
+                All line items
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!--  SECTION 5: REPORTS                         -->
+      <!-- ════════════════════════════════════════════ -->
+
+      <p class="section-title">5 · Reports & Analytics</p>
+
+      <div class="module-grid" style="max-width: 680px; margin: 0 auto">
+        <div class="module-card node-orange">
+          <div class="icon">📈</div>
+          <div class="label">Overview Hub</div>
+          <div class="sub">Charts · date range presets</div>
+        </div>
+        <div class="module-card node-amber">
+          <div class="icon">💰</div>
+          <div class="label">Revenue Report</div>
+          <div class="sub">Daily / monthly · CSV export</div>
+        </div>
+        <div class="module-card node-blue">
+          <div class="icon">🔧</div>
+          <div class="label">Technician Report</div>
+          <div class="sub">Jobs done · incentive calc</div>
+        </div>
+        <div class="module-card node-green">
+          <div class="icon">📦</div>
+          <div class="label">Services & Products</div>
+          <div class="sub">Popularity · profit margins</div>
+        </div>
+        <div class="module-card node-purple" style="grid-column: span 2">
+          <div class="icon">⏱</div>
+          <div class="label">Turnaround Time</div>
+          <div class="sub">Fastest · slowest · on-time vs delayed · by priority</div>
+        </div>
+        <div class="module-card node-grey" style="grid-column: span 2">
+          <div class="icon">⬇️</div>
+          <div class="label">CSV Downloads</div>
+          <div class="sub">All reports exportable · opens in Excel / Google Sheets</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!--  SECTION 6: MASTER DATA & ADMIN             -->
+      <!-- ════════════════════════════════════════════ -->
+
+      <p class="section-title">6 · Master Data & Administration</p>
+
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap">
+        <div class="branch-col">
+          <div style="font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.06em">Master Data</div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div class="node node-grey" style="width: 150px; padding: 10px 14px">
+              <div style="font-size: 16px; margin-bottom: 4px">⚙️</div>
+              <div class="node-title" style="font-size: 12px">Services</div>
+              <div class="node-sub">Catalogue + pricing</div>
+            </div>
+            <div class="node node-grey" style="width: 150px; padding: 10px 14px">
+              <div style="font-size: 16px; margin-bottom: 4px">📦</div>
+              <div class="node-title" style="font-size: 12px">Products & Tyres</div>
+              <div class="node-sub">Brand · size · cost/sell</div>
+            </div>
+            <div class="node node-grey" style="width: 150px; padding: 10px 14px">
+              <div style="font-size: 16px; margin-bottom: 4px">🚙</div>
+              <div class="node-title" style="font-size: 12px">Makes & Models</div>
+              <div class="node-sub">32 makes · 200+ models</div>
+            </div>
+            <div class="node node-grey" style="width: 150px; padding: 10px 14px">
+              <div style="font-size: 16px; margin-bottom: 4px">🔩</div>
+              <div class="node-title" style="font-size: 12px">Settings</div>
+              <div class="node-sub">Business config</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="branch-col">
+          <div style="font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.06em">Users</div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div class="node node-admin" style="width: 160px; padding: 10px 14px">
+              <div style="font-size: 16px; margin-bottom: 4px">👤</div>
+              <div class="node-title" style="font-size: 12px">User Management</div>
+              <div class="node-sub">Add · edit · disable</div>
+            </div>
+            <div class="node node-admin" style="width: 160px; padding: 10px 14px">
+              <div style="font-size: 16px; margin-bottom: 4px">🔐</div>
+              <div class="node-title" style="font-size: 12px">Roles & Permissions</div>
+              <div class="node-sub">5 system roles + custom</div>
+            </div>
+            <div style="background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; width: 160px">
+              <div style="font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px">Permission Matrix</div>
+              <div style="font-size: 11px; color: var(--text); line-height: 1.7">
+                ✓ dashboard.view
+                <br />
+                ✓ job_cards.create
+                <br />
+                ✓ billing.payment
+                <br />
+                ✓ reports.export
+                <br />
+                <span style="color: var(--muted)">+ 22 more keys</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="branch-col">
+          <div style="font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.06em">Security Rules</div>
+          <div style="background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; width: 200px">
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px">
+              <div style="display: flex; gap: 8px; align-items: flex-start">
+                <span>🔒</span>
+                <span>Prepared statements on all DB queries</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: flex-start">
+                <span>🛡</span>
+                <span>requireRole() on every page</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: flex-start">
+                <span>📝</span>
+                <span>Full audit log — who changed what</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: flex-start">
+                <span>🔑</span>
+                <span>SHA256 + secret key password hashing</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: flex-start">
+                <span>🚫</span>
+                <span>Techs can't access other techs' jobs</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: flex-start">
+                <span>✋</span>
+                <span>Closed jobs cannot be edited</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ════════════════════════════════════════════ -->
+      <!--  PHASES SUMMARY                             -->
+      <!-- ════════════════════════════════════════════ -->
+
+      <!-- <p class="section-title">Build Phases</p>
+
+  <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:8px;">
+    <?php $phases = [
+      ['1','DB + Auth + Dashboard','#1A1A1A'],
+      ['2','Customers + Vehicles + Master','#1D4ED8'],
+      ['3','Job Cards + Technician Module','#D4621A'],
+      ['4','QC + Billing + Payments','#7C3AED'],
+      ['5','Reports + Analytics','#2D7A4F'],
+      ['5b','Roles & Permissions','#B45309'],
+      ['6','Notifications + Photos','#6B7280'],
+    ]; ?>
+
+    <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+      <div style="padding:8px 14px; background:#E8F5EE; border:1.5px solid #2D7A4F; border-radius:8px; font-size:12px; font-weight:700; color:#2D7A4F; text-align:center;">✅ Phase 1<div style="font-weight:400; font-size:11px;">DB + Auth + Dashboard</div></div>
+      <div style="padding:8px 14px; background:#E8F5EE; border:1.5px solid #2D7A4F; border-radius:8px; font-size:12px; font-weight:700; color:#2D7A4F; text-align:center;">✅ Phase 2<div style="font-weight:400; font-size:11px;">Customers + Vehicles</div></div>
+      <div style="padding:8px 14px; background:#E8F5EE; border:1.5px solid #2D7A4F; border-radius:8px; font-size:12px; font-weight:700; color:#2D7A4F; text-align:center;">✅ Phase 3<div style="font-weight:400; font-size:11px;">Job Cards + Technician</div></div>
+      <div style="padding:8px 14px; background:#E8F5EE; border:1.5px solid #2D7A4F; border-radius:8px; font-size:12px; font-weight:700; color:#2D7A4F; text-align:center;">✅ Phase 4<div style="font-weight:400; font-size:11px;">QC + Billing</div></div>
+      <div style="padding:8px 14px; background:#E8F5EE; border:1.5px solid #2D7A4F; border-radius:8px; font-size:12px; font-weight:700; color:#2D7A4F; text-align:center;">✅ Phase 5<div style="font-weight:400; font-size:11px;">Reports + Roles</div></div>
+      <div style="padding:8px 14px; background:var(--amber-lt); border:1.5px solid var(--amber); border-radius:8px; font-size:12px; font-weight:700; color:var(--amber); text-align:center;">⏳ Phase 6<div style="font-weight:400; font-size:11px;">Notifications + Photos</div></div>
+    </div>
+  </div>
+
+  <p style="text-align:center; font-size:12px; color:var(--muted); margin-top:24px;">
+    Hover over any node to see the file path · 14 tables · 40+ PHP files · 26 permission keys
+  </p> -->
+    </div>
+  </body>
+</html>
